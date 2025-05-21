@@ -1,5 +1,6 @@
 #include "Stage.h"
 #include "MapChip.h"
+#include "Input.h"
 namespace
 {
 	//int kx, ky;
@@ -33,7 +34,14 @@ namespace
 	//	{ 120,17,17,119,119,119,67,67,67,67,67,67,119,119,119,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67},
 	//	{ 119,119,119,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67 },
  //    };
+	//const int IMAGE_SIZE = { 32 }; //画像全体のサイズ
+	//const int MAP_WIDTH = { 32 };
+	//const int MAP_HEIGHT = { 22 };
+	//const int MAP_CHIP_WIDTH = { 16 }; //画像一つの大きさ
+	//const int MAP_CHIP_HEIGHT = { 12 };
+	//const int myMap[MAP_HEIGHT][MAP_WIDTH];
 	 const int mapEdit = LoadGraph("./bg.png");
+	 const int MAP_EDIT_X = 1025;
 }
 Stage::Stage()
 	:GameObject()
@@ -73,6 +81,54 @@ Stage::~Stage()
 
 void Stage::Update()
 {
+	if (Input::IsButtonDown(MOUSE_INPUT_LEFT))
+	{
+		//マウスが押された瞬間の処理
+		DxLib::printfDx("左が押されました:");
+	}
+
+	if (Input::IsButtonDown(MOUSE_INPUT_RIGHT))
+	{
+		//マウスが押された瞬間の処理
+		DxLib::printfDx("右が押されました:");
+	}
+
+	if (Input::IsButtonKeep(MOUSE_INPUT_LEFT))
+	{
+		//マウスが押されている間の処理
+		DxLib::printfDx("左が押されている:");
+	}
+
+	if (Input::IsButtonKeep(MOUSE_INPUT_RIGHT))
+	{
+		//マウスが押されている間の処理
+		DxLib::printfDx("右が押されている:");
+	}
+	if (Input::IsButtonUP(MOUSE_INPUT_LEFT))
+	{
+		//マウスが離された瞬間
+		DxLib::printfDx("左が離された: ");
+	}
+	if (Input::IsButtonUP(MOUSE_INPUT_RIGHT))
+	{
+		//マウスが離された瞬間
+		DxLib::printfDx("右が離された: ");
+	}
+	int mx = -1, my = -1;
+
+	if (GetMousePoint(&mx, &my) == 0)
+	{
+		DxLib::printfDx("マウスの座標(%d,%d)\n",mx,my);
+	}
+	else
+	{
+		DxLib::printfDx("マウスの座標取得失敗\n");
+	}
+
+	if (mx >= MAP_EDIT_X)
+	{
+		DrawLine(mx,my,MAP_WIDTH - mx, MAP_HEIGHT - my, GetColor(0, 0, 255), TRUE);
+	}
 }
 
 void Stage::Draw()
