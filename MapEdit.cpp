@@ -20,10 +20,10 @@ void MapEdit::Update()
 
 void MapEdit::Draw()
 {
-	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	DrawBox(LEFT_MARGIN + 0,TOP_MARGIN +0, LEFT_MARGIN + MAP_WIDTH * MAP_IMAGE_SIZE,
 		   TOP_MARGIN +MAP_HEIGHT * MAP_IMAGE_SIZE, GetColor(255, 255, 0), FALSE, 3);
-
+	
 
 	for (int j = 0; j < MAP_WIDTH; j++)
 	{ 

@@ -56,6 +56,11 @@ Stage::Stage()
 	//	         IMAGE_SIZE, IMAGE_SIZE, BgHandle_.data());
 	mapChip_ = new MapChip();
 	mapEdit_ = new MapEdit();
+	mousePos_.x = -10;
+	mousePos_.y = -10;
+	isMouseDown_ = false;
+	isOldMouseDown_ = false;
+	isDragging_ = false;
 }
 
 Stage::~Stage()
@@ -84,7 +89,7 @@ void Stage::Update()
 	if (Input::IsButtonDown(MOUSE_INPUT_LEFT))
 	{
 		//マウスが押された瞬間の処理
-		DxLib::printfDx("左が押されました:");
+		DxLib::printfDx("左が押されました:\n");
 	}
 
 	if (Input::IsButtonDown(MOUSE_INPUT_RIGHT))
@@ -114,8 +119,8 @@ void Stage::Update()
 		//マウスが離された瞬間
 		DxLib::printfDx("右が離された: ");
 	}
+	
 	int mx = -1, my = -1;
-
 	if (GetMousePoint(&mx, &my) == 0)
 	{
 		DxLib::printfDx("マウスの座標(%d,%d)\n",mx,my);
@@ -124,11 +129,10 @@ void Stage::Update()
 	{
 		DxLib::printfDx("マウスの座標取得失敗\n");
 	}
-
-	if (mx >= MAP_EDIT_X)
-	{
-		DrawLine(mx,my,MAP_WIDTH - mx, MAP_HEIGHT - my, GetColor(0, 0, 255), TRUE);
-	}
+	
+	
+		//DrawBox(MAP_EDIT_X,0,MAP_EDIT_X + MAP_IMAGE_SIZE,0, GetColor(0, 0, 255), TRUE);
+	
 }
 
 void Stage::Draw()

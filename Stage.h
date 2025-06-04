@@ -10,6 +10,11 @@ class Stage :
     //std::vector<int> BgHandle_;
     MapChip* mapChip_;
     MapEdit* mapEdit_;
+    POINT mousePos_;
+    bool isMouseDown_;
+    bool isOldMouseDown_;
+    bool isDragging_;
+
 public:
     Stage();
     ~Stage();

@@ -63,8 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		ImGui_ImplDXlib_NewFrame();
 		ImGui::NewFrame();
 #endif
-
-		AppUpdate();
+        AppUpdate();
 
 		if (ProcessMessage() == -1 || AppIsExit()) {
 			break;
