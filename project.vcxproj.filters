@@ -119,6 +119,7 @@
     <ClInclude Include="MapChip.h" />
     <ClInclude Include="MapEdit.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="globals.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library">

@@ -2,6 +2,7 @@
 #include "Source/screen.h"
 #include "Input.h"
 #include "ImGui/imgui.h"
+#include "MapEdit.h"
 namespace
 {
 	const int IMAGE_SIZE = { 32 }; //画像全体のサイズ
@@ -14,26 +15,37 @@ namespace
 	
 	//ドラッグ開始と判定する移動量の数値
 	const int DRAG_THRESHOLD = 5;
-	bool isInMapChipArea_ = true;
-
 }
 MapChip::MapChip()
-	: GameObject()
-	, BgHandle(MAP_CHIP_WIDTH* MAP_CHIP_HEIGHT, -1), selected_({0,0})
+	: GameObject(),isUpdate_(false), isInMapChipArea_(false), selectedIndex_(-1)
+	, bgHandle(MAP_CHIP_WIDTH* MAP_CHIP_HEIGHT, -1), selected_({0,0})
 {
 	LoadDivGraph("./bg.png", MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT,
 		MAP_CHIP_WIDTH, MAP_CHIP_HEIGHT,
-		IMAGE_SIZE, IMAGE_SIZE, BgHandle.data());
+		IMAGE_SIZE, IMAGE_SIZE, bgHandle.data());
+	for (int i = 0; i < MAP_CHIP_NUM_X; i++)
+	{
+		for (int j = 0; j < MAP_CHIP_NUM_Y; j++)
+		{
+         Rect tmp{
+			   i *IMAGE_SIZE, j * IMAGE_SIZE,
+			   IMAGE_SIZE,IMAGE_SIZE
+			};
+
+		 bgRects_.push_back(tmp);
+		
+		}
+	}
 }
 
 MapChip::~MapChip()
 {// MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT
 	for (int i = 0; i < MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT; i++)
 	{
-		if (BgHandle[i] != -1)
+		if (bgHandle[i] != -1)
 		{
-			DeleteGraph(BgHandle[i]);
-			BgHandle[i] = -1;
+			DeleteGraph(bgHandle[i]);
+			bgHandle[i] = -1;
 		}
 	}
 }
@@ -45,18 +57,29 @@ void MapChip::Update()
 	{
 		return;
 	}
+	//if (!isInMapChipArea_)
+	//{
+	//	return;
+	//}
 	isInMapChipArea_ = (mousePos.x > Screen::WIDTH - MAP_CHIP_WIN_WIDTH && 
-		mousePos.x < Screen::WIDTH && mousePos.y > 0 && mousePos.y < MAP_CHIP_WIN_HEIGHT);
+		mousePos.x < Screen::WIDTH && mousePos.y > 0 && mousePos.y < MAP_CHIP_HEIGHT);
 	if (isInMapChipArea_)
 	{
 		
 		 selected_.x = (mousePos.x - (Screen::WIDTH - MAP_CHIP_WIN_WIDTH)) / IMAGE_SIZE;
 		 selected_.y = mousePos.y / IMAGE_SIZE;
+
+		/* int gridX = (mousePos.x - LEFT_MARGIN) / IMAGE_SIZE;
+		 int gridY = (mousePos.y - MAP_IMAGE_SIZE);*/
 		 if(Input::IsButtonDown(MOUSE_INPUT_LEFT))
 		{
+			// MapChip* mapChip = FindGameObject<MapChip>();
 			isHold_ = true;
-		   selectedIndex_ = BgHandle[selected_.y *  MAP_CHIP_NUM_X + selected_.x];
-
+		   selectedIndex_ = bgHandle[selected_.y *  MAP_CHIP_NUM_X + selected_.x];
+		   //if (mapChip && mapChip->IsHold())
+		   //{
+			  // //SetMap({ gridX,gridY }), mapChip->GetHoldImage());
+		   //}
 		 }
 		
 	}
@@ -81,33 +104,38 @@ void MapChip::Draw()
 		{
 			//mapを作る画像の描画
 			DrawGraph(TOPLEFT_X + i * IMAGE_SIZE, TOPLEFT_Y + j * IMAGE_SIZE,
-				BgHandle[ i  + j * MAP_CHIP_NUM_X], TRUE);
+				bgHandle[ i  + j * MAP_CHIP_NUM_X], TRUE);
 		}
 		
 	}
 	
 	if (isInMapChipArea_)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+		/*SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 		DrawBox(TOPLEFT_X, TOPLEFT_Y, RIGHTBOTTOM_X, RIGHTBOTTOM_Y, GetColor(132,255,193), TRUE);
+		
 		DrawBox(TOPLEFT_X + selected_.x * IMAGE_SIZE,selected_.y * IMAGE_SIZE,
 			   TOPLEFT_X+ selected_.x* IMAGE_SIZE + IMAGE_SIZE,selected_.y * IMAGE_SIZE + IMAGE_SIZE,(132,255,193), TRUE);
+		
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 0);
+		
 		DrawBox(TOPLEFT_X + selected_.x * IMAGE_SIZE, selected_.y * IMAGE_SIZE,
-			    TOPLEFT_X + selected_.x * IMAGE_SIZE + IMAGE_SIZE,selected_.y * IMAGE_SIZE + IMAGE_SIZE,GetColor(255, 0, 0), FALSE,2);
+			    TOPLEFT_X + selected_.x * IMAGE_SIZE + IMAGE_SIZE,selected_.y * IMAGE_SIZE + IMAGE_SIZE,GetColor(255, 0, 0), FALSE,2);*/
 		
 
-		/*int xM = Screen::WIDTH - MAP_CHIP_WIN_WIDTH;
+		int xM = Screen::WIDTH - MAP_CHIP_WIN_WIDTH;
 
 
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 		DrawBox(xM + selected_.x * IMAGE_SIZE + 1, selected_.y * IMAGE_SIZE - 1,
 			xM + (selected_.x + 1) * IMAGE_SIZE - 1, (selected_.y + 1) * IMAGE_SIZE + 1,
 			GetColor(255, 255, 0), TRUE);
+		
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		
 		DrawBox(xM + selected_.x * IMAGE_SIZE, selected_.y * IMAGE_SIZE,
 			xM + (selected_.x + 1) * IMAGE_SIZE, (selected_.y + 1) * IMAGE_SIZE,
-			GetColor(255, 0, 0), FALSE, 2);*/
+			GetColor(255, 0, 0), FALSE, 2);
 	}
 	if (isHold_)
 	{
@@ -117,10 +145,32 @@ void MapChip::Draw()
 			DrawExtendGraph(mousePos.x, mousePos.y, 
 				mousePos.x + IMAGE_SIZE, mousePos.y + IMAGE_SIZE, selectedIndex_, TRUE);
 		}
+		if (Input::IsButtonUP(MOUSE_INPUT_RIGHT))
+		{
+			isHold_ = false;
+			selectedIndex_ = -1;
+		}
 	}
 	
 	////mapEditの赤い枠
-	//DrawBox(TOPLEFT_X, TOPLEFT_Y, RIGHTBOTTOM_X, RIGHTBOTTOM_Y, GetColor(255, 0, 0), FALSE,3);
+	///DrawBox(TOPLEFT_X, TOPLEFT_Y, RIGHTBOTTOM_X, RIGHTBOTTOM_Y, GetColor(255, 0, 0), FALSE,3);
 	
 
+}
+
+bool MapChip::IsHold()
+{
+	return isHold_;
+}
+
+bool MapChip::GetHoldImage()
+{
+	if (isHold_)
+	{
+		return selectedIndex_;
+	}
+	else
+	{
+		return -1;
+	}
 }

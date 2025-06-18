@@ -1,5 +1,4 @@
 #include "Stage.h"
-#include "MapChip.h"
 #include "Input.h"
 namespace
 {
@@ -40,8 +39,8 @@ namespace
 	//const int MAP_CHIP_WIDTH = { 16 }; //画像一つの大きさ
 	//const int MAP_CHIP_HEIGHT = { 12 };
 	//const int myMap[MAP_HEIGHT][MAP_WIDTH];
-	 const int mapEdit = LoadGraph("./bg.png");
-	 const int MAP_EDIT_X = 1025;
+	// const int mapEdit = LoadGraph("./bg.png");
+	// const int MAP_EDIT_X = 1025;
 }
 Stage::Stage()
 	:GameObject()
@@ -56,11 +55,11 @@ Stage::Stage()
 	//	         IMAGE_SIZE, IMAGE_SIZE, BgHandle_.data());
 	mapChip_ = new MapChip();
 	mapEdit_ = new MapEdit();
-	mousePos_.x = -10;
+	/*mousePos_.x = -10;
 	mousePos_.y = -10;
 	isMouseDown_ = false;
 	isOldMouseDown_ = false;
-	isDragging_ = false;
+	isDragging_ = false;*/
 }
 
 Stage::~Stage()
@@ -80,58 +79,57 @@ Stage::~Stage()
 		BgHandle = -1;
 	}*/
 	delete mapChip_; //マップのインスタンスを解放
-	delete mapEdit_;
+    //delete mapEdit_;
 }
 
 
 void Stage::Update()
 {
-	if (Input::IsButtonDown(MOUSE_INPUT_LEFT))
-	{
-		//マウスが押された瞬間の処理
-		DxLib::printfDx("左が押されました:\n");
-	}
+	//if (Input::IsButtonDown(MOUSE_INPUT_LEFT))
+	//{
+	//	//マウスが押された瞬間の処理
+	//	DxLib::printfDx("左が押されました:\n");
+	//}
 
-	if (Input::IsButtonDown(MOUSE_INPUT_RIGHT))
-	{
-		//マウスが押された瞬間の処理
-		DxLib::printfDx("右が押されました:");
-	}
+	//if (Input::IsButtonDown(MOUSE_INPUT_RIGHT))
+	//{
+	//	//マウスが押された瞬間の処理
+	//	DxLib::printfDx("右が押されました:");
+	//}
 
-	if (Input::IsButtonKeep(MOUSE_INPUT_LEFT))
-	{
-		//マウスが押されている間の処理
-		DxLib::printfDx("左が押されている:");
-	}
+	//if (Input::IsButtonKeep(MOUSE_INPUT_LEFT))
+	//{
+	//	//マウスが押されている間の処理
+	//	DxLib::printfDx("左が押されている:");
+	//}
 
-	if (Input::IsButtonKeep(MOUSE_INPUT_RIGHT))
-	{
-		//マウスが押されている間の処理
-		DxLib::printfDx("右が押されている:");
-	}
-	if (Input::IsButtonUP(MOUSE_INPUT_LEFT))
-	{
-		//マウスが離された瞬間
-		DxLib::printfDx("左が離された: ");
-	}
-	if (Input::IsButtonUP(MOUSE_INPUT_RIGHT))
-	{
-		//マウスが離された瞬間
-		DxLib::printfDx("右が離された: ");
-	}
+	//if (Input::IsButtonKeep(MOUSE_INPUT_RIGHT))
+	//{
+	//	//マウスが押されている間の処理
+	//	DxLib::printfDx("右が押されている:");
+	//}
+	//if (Input::IsButtonUP(MOUSE_INPUT_LEFT))
+	//{
+	//	//マウスが離された瞬間
+	//	DxLib::printfDx("左が離された: ");
+	//}
+	//if (Input::IsButtonUP(MOUSE_INPUT_RIGHT))
+	//{
+	//	//マウスが離された瞬間
+	//	DxLib::printfDx("右が離された: ");
+	//}
+	//
+	//int mx = -1, my = -1;
+	//if (GetMousePoint(&mx, &my) == 0)
+	//{
+	//	DxLib::printfDx("マウスの座標(%d,%d)\n",mx,my);
+	//}
+	//else
+	//{
+	//	DxLib::printfDx("マウスの座標取得失敗\n");
+	//}
+	//
 	
-	int mx = -1, my = -1;
-	if (GetMousePoint(&mx, &my) == 0)
-	{
-		DxLib::printfDx("マウスの座標(%d,%d)\n",mx,my);
-	}
-	else
-	{
-		DxLib::printfDx("マウスの座標取得失敗\n");
-	}
-	
-	
-		//DrawBox(MAP_EDIT_X,0,MAP_EDIT_X + MAP_IMAGE_SIZE,0, GetColor(0, 0, 255), TRUE);
 	
 }
 

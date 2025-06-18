@@ -1,6 +1,7 @@
 #pragma once
 #include "Library/GameObject.h"
 #include <vector>
+#include "globals.h"
 namespace
 {
     const int MAP_WIDTH = { 20 };
@@ -12,11 +13,18 @@ namespace
 class MapEdit :
     public GameObject
 {
-    std::vector<int>myMap_;
 public:
     MapEdit();
     ~MapEdit();
+
+    void SetMap(Point p, int value);
+    int GetMap(Point p) const;
     void Update()override;
     void Draw() override;
+    bool IsInMapEditArea() const { return isInMapEditArea_; }
+private:
+    std::vector<int>myMap_;
+    Rect mapEditRect_; //マップ領域の矩形
+    bool isInMapEditArea_;
 };
 
