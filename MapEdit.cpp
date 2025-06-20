@@ -1,5 +1,8 @@
 #include "MapEdit.h"
 #include <cassert>
+#include "Input.h"
+#include "DxLib.h"
+#include "MapChip.h"
 //左のマス目のあるマップ
 
 
@@ -7,7 +10,7 @@ MapEdit::MapEdit()
 	:GameObject(),myMap_(MAP_WIDTH * MAP_HEIGHT,-1),isInMapEditArea_(false) //初期値を-1で20*20
 {
 	mapEditRect_ = { LEFT_MARGIN ,TOP_MARGIN,
-					MAP_WIDTH * MAP_IMAGE_SIZE, MAP_HEIGHT * MAP_IMAGE_SIZE };
+				MAP_WIDTH * MAP_IMAGE_SIZE, MAP_HEIGHT * MAP_IMAGE_SIZE };
 }
  
 
@@ -45,18 +48,44 @@ void MapEdit::Update()
 
 	isInMapEditArea_ = (mousePos.x >= mapEditRect_.x
 		&& mousePos.x <= mapEditRect_.x + mapEditRect_.w
-		&& mousePos.y >= mapEditRect_.y 
+		&& mousePos.y >= mapEditRect_.y
 		&& mousePos.y <= mapEditRect_.y + mapEditRect_.h);
+	if (!isInMapEditArea_)
+	{
+		return;
+	}
+	int gridX = (mousePos.x - LEFT_MARGIN) / MAP_IMAGE_SIZE;
+	int gridY = (mousePos.y - TOP_MARGIN) / MAP_IMAGE_SIZE;
+	drawAreaRect_ = { LEFT_MARGIN + gridX * MAP_IMAGE_SIZE, TOP_MARGIN + gridY * MAP_IMAGE_SIZE,
+		MAP_IMAGE_SIZE, MAP_IMAGE_SIZE };
+	if (Input::IsButtonDown(MOUSE_INPUT_LEFT))
+	{
+		MapChip* mapChip = FindGameObject<MapChip>();
+		if (mapChip && mapChip->IsHold())
+		{
+			SetMap({ gridX,gridY }, mapChip->GetHoldImage());
+		}
+	}
 }
 
 void MapEdit::Draw()
 {
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
-	DrawBox(LEFT_MARGIN + 0,TOP_MARGIN +0, 
-		   LEFT_MARGIN + MAP_WIDTH * MAP_IMAGE_SIZE,
-		   TOP_MARGIN +MAP_HEIGHT * MAP_IMAGE_SIZE, GetColor(255, 255, 0), FALSE, 5);
-	
+	for (int j = 0; j < MAP_WIDTH; j++)
+	{
+		for (int i = 0; i < MAP_HEIGHT; i++)
+		{
+			int value = GetMap({ i,j });
+			if (value != -1) //-1なら何も描画しない
+			{
+				DrawGraph(LEFT_MARGIN + i * MAP_IMAGE_SIZE, TOP_MARGIN + j * MAP_IMAGE_SIZE,
+					value, TRUE);
+			}
+		}
+	}
 
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	DrawBox(LEFT_MARGIN + 0, TOP_MARGIN + 0,
+		LEFT_MARGIN + MAP_WIDTH * MAP_IMAGE_SIZE, TOP_MARGIN + MAP_HEIGHT * MAP_IMAGE_SIZE, GetColor(255, 255, 0), FALSE, 5);
 	for (int j = 0; j < MAP_WIDTH; j++)
 	{ 
 		for (int i = 0; i < MAP_HEIGHT; i++)
@@ -70,13 +99,17 @@ void MapEdit::Draw()
 			GetColor(255, 255, 255), 1);
 		}
 				
-		
+	/*	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+		DrawBox(LEFT_MARGIN + 0, TOP_MARGIN + 0,
+			LEFT_MARGIN + MAP_WIDTH * MAP_IMAGE_SIZE,
+			TOP_MARGIN + MAP_HEIGHT * MAP_IMAGE_SIZE, GetColor(255, 255, 0), FALSE, 5);*/
+
     }
 	if (isInMapEditArea_)
 	{
-		DrawBox(mapEditRect_.x, mapEditRect_.y,
-			    mapEditRect_.x + mapEditRect_.w, 
-			  mapEditRect_.y + mapEditRect_.h, GetColor(255, 255, 0), TRUE);
+		DrawBox(drawAreaRect_.x, drawAreaRect_.y,
+			drawAreaRect_.x + drawAreaRect_.w,
+			drawAreaRect_.y + drawAreaRect_.h, GetColor(255, 255, 0), TRUE);
     }
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
