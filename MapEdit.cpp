@@ -70,7 +70,6 @@ void MapEdit::Update()
 		if (CheckHitKey(KEY_INPUT_LSHIFT))
 		{
 			SetMap({ gridX,gridY }, -1);
-			
 			return;
 		}
 		else if (mapChip && mapChip->IsHold())
@@ -79,6 +78,7 @@ void MapEdit::Update()
 		}
 	}
 	
+
 	if (Input::IsKeyDown(KEY_INPUT_S))
 	{
 		SaveMapData();

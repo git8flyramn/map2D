@@ -2,7 +2,6 @@
 #include "Source/screen.h"
 #include "Input.h"
 #include "ImGui/imgui.h"
-#include "MapEdit.h"
 namespace
 {
 	const int IMAGE_SIZE = { 32 }; //画像全体のサイズ
@@ -167,10 +166,13 @@ void MapChip::Draw()
 	{
 		int xM = Screen::WIDTH - MAP_CHIP_WIN_WIDTH;
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
 		DrawBox(xM + selected_.x * IMAGE_SIZE + 1, selected_.y * IMAGE_SIZE - 1,
 			xM + (selected_.x + 1) * IMAGE_SIZE - 1, (selected_.y + 1) * IMAGE_SIZE + 1,
 			GetColor(255, 255, 0), TRUE);
+
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		
 		DrawBox(xM + selected_.x * IMAGE_SIZE, selected_.y * IMAGE_SIZE,
 			xM + (selected_.x + 1) * IMAGE_SIZE, (selected_.y + 1) * IMAGE_SIZE,
 			GetColor(255, 0, 0), FALSE, 2);
