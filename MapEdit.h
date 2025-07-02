@@ -22,10 +22,12 @@ public:
     void Update()override;
     void Draw() override;
     bool IsInMapEditArea() const { return isInMapEditArea_; }
+    void SaveMapData();
 private:
     std::vector<int>myMap_;
     Rect mapEditRect_; //マップ領域の矩形
     Rect drawAreaRect_;//描画領域の矩形
     bool isInMapEditArea_;
+
 };
 
