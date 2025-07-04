@@ -23,6 +23,7 @@ public:
     void Draw() override;
     bool IsInMapEditArea() const { return isInMapEditArea_; }
     void SaveMapData();
+    void LoadMapData();
 private:
     std::vector<int>myMap_;
     Rect mapEditRect_; //マップ領域の矩形
