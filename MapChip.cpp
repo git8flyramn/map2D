@@ -230,19 +230,23 @@ namespace
 MapChip::MapChip()
 	: GameObject(), isUpdate_(false), isInMapChipArea_(false), selectedIndex_(-1)
 	, bgHandle(MAP_CHIP_WIDTH* MAP_CHIP_HEIGHT, -1), selected_({ 0,0 }) //‰Šú’l‚ğ-1‚Å16*12‚Ì”z—ñ‚ğ‰Šú‰»‚·‚é
-{
-	LoadDivGraph("./bg.png", MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT,
-		MAP_CHIP_WIDTH, MAP_CHIP_HEIGHT,
-		IMAGE_SIZE, IMAGE_SIZE, bgHandle.data());
-	for (int i = 0; i < MAP_CHIP_NUM_X; i++) {
-		for (int j = 0; j < MAP_CHIP_NUM_Y; j++) {
-			Rect tmp{
-				i * IMAGE_SIZE, j * IMAGE_SIZE,
-				IMAGE_SIZE, IMAGE_SIZE
-			};
-			bgRects_.push_back(tmp);
-		}
-	}
+{    
+	/*char buff[128];
+	GetPrivateProfileStringA("MapChip","Title","MYGAME",buff,sizeof(buff),"./mySetup.ini");
+
+	int wsize = GetPrivateProfileInt("MapChip", "WinSize", 255 ,"./mySetup.ini");*/
+
+	    LoadDivGraph("./bg.png", MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT,
+		MAP_CHIP_WIDTH, MAP_CHIP_HEIGHT,IMAGE_SIZE, IMAGE_SIZE, bgHandle.data());
+	//for (int i = 0; i < MAP_CHIP_NUM_X; i++) {
+	//	for (int j = 0; j < MAP_CHIP_NUM_Y; j++) {
+	//		Rect tmp{
+	//			i * IMAGE_SIZE, j * IMAGE_SIZE,
+	//			IMAGE_SIZE, IMAGE_SIZE
+	//		};
+	//		//bgRects_.push_back(tmp);
+	//	}
+	//}
 
 	//LUT(Look Up Table) ì¬
 	for (int i = 0; i < bgHandle.size(); i++)

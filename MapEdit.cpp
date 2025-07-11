@@ -5,10 +5,10 @@
 #include "DxLib.h"
 #include "MapChip.h"
 #include <fstream>
-
+#include <sstream>
+#include <iostream>
+#include <string>
 //左のマス目のあるマップ
-
-
 //MapEdit::MapEdit()
 //	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1), isInMapEditArea_(false) //初期値を-1で20*20
 //{
@@ -131,6 +131,8 @@
 //
 //}
 //
+
+
 MapEdit::MapEdit()
 	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1), //初期値を-1で20*20の配列を初期化する
 	isInMapEditArea_(false) //マップエディタ領域内にいるかどうか
@@ -280,26 +282,65 @@ void MapEdit::SaveMapData()
 	ofn.lpstrFile = filename;
 	ofn.nMaxFile = 255;
 	ofn.Flags = OFN_OVERWRITEPROMPT;
+
 	if (GetSaveFileName(&ofn))
 	{
 		printfDx("ファイルが選択された");
 		//ファイルを開いてセーブ
 		std::ofstream openfile(filename);
+		openfile << "#TinyMapData\n";
+		//std::ofstream flie("data.dat");
+		MapChip* mc = FindGameObject<MapChip>();
+	/*	openfile << " #header" << "\n" << "WIDTH 20" << "\n" << "HEIGHT 20" << "\n";
+		openfile << "#data" << std::endl;*/
+
+		for (int j = 0; j < MAP_HEIGHT; j++)
+		{
+			for (int i = 0; i < MAP_WIDTH; i++)
+			{
+
+				int index;
+				if (myMap_[j * MAP_WIDTH + i] != -1)
+					index = mc->GetChipIndex(myMap_[i * MAP_WIDTH + j]);
+				else
+					index = -1;
+				if (i == MAP_WIDTH - 1)
+				{
+					openfile << index;
+				}
+				else
+				{
+					openfile << index << ',';
+				}
+			}
+			openfile << std::endl;
+		}
+		openfile.close();
+		printfDx("file Saved\n");
 	}
-	else
-	{
-		//ファイルの選択がキャンセル
-		printfDx("セーブがキャンセル\n");
-	}
-	printfDx("file Saved\n");
+
+		/*for (int j = 0; j < MAP_HEIGHT; j++)
+		{
+			for (int i = 0; i < MAP_WIDTH; i++)
+			{
+
+				int index;
+				if (myMap_[j * MAP_WIDTH + i] != -1)
+					index = mc->GetChipIndex(myMap_[i * MAP_WIDTH + j]);
+				else
+					index = -1;
+				flie << index << "";
+			}
+			flie << std::endl;
+		}
+		flie.close();
+		printfDx("file Saved\n");*/	/*printfDx("file Saved\n");
 	std::ofstream flie("data.dat");
+	flie << "#TinyMapData\n";
 	MapChip* mc = FindGameObject<MapChip>();
 	flie << " #header" << "\n" << "WIDTH 20" << "\n" << "HEIGHT 20" << "\n";
 	flie << "#data" << std::endl;
-	/*for (auto& itr : myMap_)
-	{
-		flie << itr;
-	}*/
+
 	for (int j = 0; j < MAP_HEIGHT; j++)
 	{
 		for (int i = 0; i < MAP_WIDTH; i++)
@@ -309,14 +350,16 @@ void MapEdit::SaveMapData()
 			if (myMap_[j * MAP_WIDTH + i] != -1)
 				index = mc->GetChipIndex(myMap_[i * MAP_WIDTH + j]);
 			else
-				index = -1;
-			flie << index << "";
+			index = -1;
+			flie << index << ",";
 		}
 		flie << std::endl;
 	}
 	flie.close();
-
+	printfDx("file Saved\n");*/
 }
+	
+
 
 void MapEdit::LoadMapData()
 {
@@ -334,7 +377,7 @@ void MapEdit::LoadMapData()
 	
 	
 
-	printfDx("ファイルが読み込まれた");
+	//printfDx("ファイルが読み込まれた");
 	//GetOpenFileName()
 	if (GetOpenFileName(&ifn))
 	{
@@ -343,11 +386,43 @@ void MapEdit::LoadMapData()
 		//std::filesystem ファイル名だけ取り出す
 	    //ifstreamを開く input file name
 		std::ifstream inputfile(filename);
+		//ファイルがオープンしたかどうかはチェックが必要
 		std::string line;
+
+		//mapChipの情報
+		MapChip* mc = FindGameObject<MapChip>();
+		myMap_.clear();//マップを空に
 		while (std::getline(inputfile,line))
 		{
 			if (line.empty()) continue;
-			printfDx("%s\n", line.c_str());
+			//読み込みの処理を書いていく
+			if (line[0]!= '#')
+			{
+				std::istringstream iss(line);
+				std::string tmp;//これに一個ずつ読み込む
+				while (getline(iss,tmp,',')) {
+					/*if (tmp == -1)
+						myMap_.push_back(-1);
+					else
+					    myMap_.push_back(mc->GetHandle(tmp));*/
+				}
+				printfDx("%s", tmp.c_str());
+				if (tmp == "-1")
+				{
+					myMap_.push_back(-1);
+				}
+				else
+				{
+					int index = std::stoi(tmp);
+					int handle = mc->GetHandle(index);
+					myMap_.push_back(handle);
+				}
+			}
+			/*else
+			{
+				MessageBox(nullptr, "画像の読み込みに失敗しました", "読み込みエラー", MB_OK | MB_ICONWARNING);
+			}*/
+			printfDx("\n");
 		}
 	}
 	else
@@ -355,5 +430,4 @@ void MapEdit::LoadMapData()
 		//ファイルの選択がキャンセル
 		printfDx("セーブがキャンセル\n");
 	}
-	printfDx("file Saved\n");
 }
