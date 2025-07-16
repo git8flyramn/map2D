@@ -173,7 +173,7 @@ void MapEdit::Update()
 	}
 	// マウスの座標がマップエディタ領域内にいるかどうかを判定する
 	isInMapEditArea_ = mousePos.x >= mapEditRect_.x && mousePos.x <= mapEditRect_.x + mapEditRect_.w &&
-		mousePos.y >= mapEditRect_.y && mousePos.y <= mapEditRect_.y + mapEditRect_.h;
+		               mousePos.y >= mapEditRect_.y && mousePos.y <= mapEditRect_.y + mapEditRect_.h;
 
 	//左上　mapEditRect_.x, mapEditRect_.y
 	//右上　mapEditRect_.x + mapEditRect_.w, mapEditRect_.y
@@ -271,54 +271,102 @@ void MapEdit::Draw()
 
 void MapEdit::SaveMapData()
 {
-	//ファイル選択ダイアログを出す
+	////ファイル選択ダイアログを出す
+	//TCHAR filename[255] = "";
+	//OPENFILENAME ofn = { 0 };
+
+	//ofn.lStructSize = sizeof(ofn);
+	////ウィンドウのオーナー = 親ウィンドウのハンドル
+	//ofn.hwndOwner = GetMainWindowHandle();
+	//ofn.lpstrFilter = "全てのファイル (*.*)\0*.*\0";
+	//ofn.lpstrFile = filename;
+	//ofn.nMaxFile = 255;
+	//ofn.Flags = OFN_OVERWRITEPROMPT;
+
+	//if (GetSaveFileName(&ofn))
+	//{
+	//	printfDx("ファイルが選択された");
+	//	//ファイルを開いてセーブ
+	//	std::ofstream openfile(filename);
+	//	openfile << "#TinyMapData\n";
+	//	
+	//	MapChip* mc = FindGameObject<MapChip>();
+	//
+	//	for (int j = 0; j < MAP_HEIGHT; j++)
+	//	{
+	//		for (int i = 0; i < MAP_WIDTH; i++)
+	//		{
+
+	//			int index;
+	//			if (myMap_[j * MAP_WIDTH + i] != -1)
+	//				index = mc->GetChipIndex(myMap_[j * MAP_WIDTH + i]);
+	//			else
+	//				index = -1;
+	//			if (i == MAP_WIDTH - 1)
+	//			{
+	//				openfile << index;
+	//			}
+	//			else
+	//			{
+	//				openfile << index << ',';
+	//			}
+	//		}
+	//		openfile << std::endl;
+	//	}
+	//	openfile.close();
+	//	printfDx("file Saved\n");
+	//}
+
+	//頑張ってファイル選択ダイアログを出す回
 	TCHAR filename[255] = "";
 	OPENFILENAME ofn = { 0 };
 
 	ofn.lStructSize = sizeof(ofn);
-	//ウィンドウのオーナー = 親ウィンドウのハンドル
+	//ウィンドウのオーナー＝親ウィンドウのハンドル
 	ofn.hwndOwner = GetMainWindowHandle();
 	ofn.lpstrFilter = "全てのファイル (*.*)\0*.*\0";
 	ofn.lpstrFile = filename;
 	ofn.nMaxFile = 255;
 	ofn.Flags = OFN_OVERWRITEPROMPT;
 
+
 	if (GetSaveFileName(&ofn))
 	{
-		printfDx("ファイルが選択された");
-		//ファイルを開いてセーブ
+		printfDx("ファイルが選択された\n");
+		//ファイルを開いて、セーブ
+		//std::filesystem ファイル名だけ取り出す
+		//ofstreamを開く
 		std::ofstream openfile(filename);
+		//ファイルの選択がキャンセル
+		printfDx("セーブがキャンセル\n");
 		openfile << "#TinyMapData\n";
-		//std::ofstream flie("data.dat");
-		MapChip* mc = FindGameObject<MapChip>();
-	/*	openfile << " #header" << "\n" << "WIDTH 20" << "\n" << "HEIGHT 20" << "\n";
-		openfile << "#data" << std::endl;*/
 
-		for (int j = 0; j < MAP_HEIGHT; j++)
-		{
-			for (int i = 0; i < MAP_WIDTH; i++)
-			{
+		MapChip* mc = FindGameObject<MapChip>();
+
+		for (int j = 0; j < MAP_HEIGHT; j++) {
+			for (int i = 0; i < MAP_WIDTH; i++) {
 
 				int index;
 				if (myMap_[j * MAP_WIDTH + i] != -1)
-					index = mc->GetChipIndex(myMap_[i * MAP_WIDTH + j]);
+					index = mc->GetChipIndex(myMap_[j * MAP_WIDTH + i]);
 				else
 					index = -1;
-				if (i == MAP_WIDTH - 1)
+
+				if (i == MAP_WIDTH - 1) //最後の要素なら改行しない
 				{
-					openfile << index;
+					openfile << index; //最後の要素はカンマをつけない
 				}
 				else
 				{
-					openfile << index << ',';
+					//最後の要素以外はカンマをつける
+					openfile << index << ",";
 				}
 			}
 			openfile << std::endl;
 		}
 		openfile.close();
-		printfDx("file Saved\n");
+		printfDx("File Saved!!!\n");
 	}
-
 		/*for (int j = 0; j < MAP_HEIGHT; j++)
 		{
 			for (int i = 0; i < MAP_WIDTH; i++)
@@ -400,22 +448,23 @@ void MapEdit::LoadMapData()
 			{
 				std::istringstream iss(line);
 				std::string tmp;//これに一個ずつ読み込む
-				while (getline(iss,tmp,',')) {
+				while (getline(iss, tmp, ',')) {
 					/*if (tmp == -1)
 						myMap_.push_back(-1);
 					else
-					    myMap_.push_back(mc->GetHandle(tmp));*/
-				}
-				printfDx("%s", tmp.c_str());
-				if (tmp == "-1")
-				{
-					myMap_.push_back(-1);
-				}
-				else
-				{
-					int index = std::stoi(tmp);
-					int handle = mc->GetHandle(index);
-					myMap_.push_back(handle);
+						myMap_.push_back(mc->GetHandle(tmp));*/
+
+					printfDx("%s", tmp.c_str());
+					if (tmp == "-1")
+					{
+						myMap_.push_back(-1);
+					}
+					else
+					{
+						int index = std::stoi(tmp);
+						int handle = mc->GetHandle(index);
+						myMap_.push_back(handle);
+					}
 				}
 			}
 			/*else
