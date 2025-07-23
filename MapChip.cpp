@@ -245,7 +245,7 @@ MapChip::MapChip()
 {    
 	
 	//ここで画像の大きさを変更して、スクロールできる大きさにする
-	bgHandle.resize(cfg_.TILE_PIX_SIZE * cfg_.TILE_X * cfg_.TILE_Y, -1);
+	bgHandle.resize(cfg_.TILE_PIX_SIZE * cfg_.TILE_X * cfg_.TILE_Y , -1);
 	    LoadDivGraph("./bg.png", cfg_.TILE_X * cfg_.TILE_Y,
 			          cfg_.TILE_X, cfg_.TILE_Y,
 			          cfg_.TILE_PIX_SIZE, cfg_.TILE_PIX_SIZE, bgHandle.data());
@@ -279,8 +279,14 @@ MapChip::~MapChip()
 
 Point MapChip::GetViewOrigin() const
 {
-	return {Screen::WIDTH - cfg_.MAPCHIP_WIN_WIDTH,0};
+	return {Screen::WIDTH - cfg_.MAPCHIP_WIN_WIDTH ,0};
 }
+
+Point MapChip::GetViewHalfOrigin() const
+{
+	return { Screen::WIDTH - cfg_.MAPCHIP_WIN_WIDTH ,-380};
+}
+
 
 bool MapChip::IsInMapChipArea(const Point& mouse) const
 {
@@ -363,6 +369,9 @@ void MapChip::Draw()
 			DrawGraph(GetViewOrigin().x + i * cfg_.TILE_PIX_SIZE,
 				GetViewOrigin().y + j * cfg_.TILE_PIX_SIZE,
 				bgHandle[index], TRUE);
+			
+			/*DrawGraph(GetViewOrigin().x + i * cfg_.TILE_PIX_SIZE,
+				GetViewOrigin().y + j * cfg_.TILE_PIX_SIZE,bgHandle[index],TRUE);*/
 		}
 	}
 	//マップチップの選択範囲をハイライト表示
@@ -380,6 +389,7 @@ void MapChip::Draw()
 		
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		
+		//今、自分が選択しているマップチップが何かを表すためのフレーム
 		DrawBox(px,py,px + size - 1 ,py + cfg_.TILE_PIX_SIZE + 1,
 			GetColor(255, 0, 0), FALSE, 2);
 	}
@@ -417,6 +427,7 @@ int MapChip::GetHoldImage()
 		return -1; //持っていない場合は-1を返す
 	}
 }
+
 int MapChip::GetChipIndex(int handle)
 {
 	return HandleToIndex[handle];

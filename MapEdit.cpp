@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iostream>
 #include <string>
+#include "ImGui/imgui.h"
 //左のマス目のあるマップ
 //MapEdit::MapEdit()
 //	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1), isInMapEditArea_(false) //初期値を-1で20*20
@@ -134,7 +135,7 @@
 
 
 MapEdit::MapEdit()
-	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1), //初期値を-1で20*20の配列を初期化する
+	:GameObject(),Ecfg_(GetMapEditConfig()), myMap_(MAP_WIDTH* MAP_HEIGHT, -1), //初期値を-1で20*20の配列を初期化する
 	isInMapEditArea_(false) //マップエディタ領域内にいるかどうか
 {
 	mapEditRect_ = { LEFT_MARGIN, TOP_MARGIN,

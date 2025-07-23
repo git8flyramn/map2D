@@ -2,6 +2,7 @@
 #include "Library/GameObject.h"
 #include <vector>
 #include "globals.h"
+#include "MapEditConfig.h"
 namespace
 {
     const int MAP_WIDTH = { 20 };
@@ -25,6 +26,7 @@ public:
     void SaveMapData();
     void LoadMapData();
 private:
+    MapEditConfig Ecfg_; //マップチップの設定
     std::vector<int>myMap_;
     Rect mapEditRect_; //マップ領域の矩形
     Rect drawAreaRect_;//描画領域の矩形

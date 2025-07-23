@@ -40,6 +40,7 @@ public:
     int  GetHoldImage(); //持ってるマップチップのハンドルを取得する
     int  GetChipIndex(int handle);
     Point GetViewOrigin() const;
+    Point GetViewHalfOrigin() const;
     bool IsInMapChipArea(const Point& mouse) const;
     Point ScreenToChip(const Point& mouse) const;
 private:
