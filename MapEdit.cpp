@@ -338,7 +338,7 @@ void MapEdit::SaveMapData()
 		//ofstreamを開く
 		std::ofstream openfile(filename);
 		//ファイルの選択がキャンセル
-		printfDx("セーブがキャンセル\n");
+		//printfDx("セーブがキャンセル\n");
 		openfile << "#TinyMapData\n";
 
 		MapChip* mc = FindGameObject<MapChip>();

@@ -244,7 +244,8 @@ MapChip::MapChip()
 	, bgHandle(cfg_.TILE_X* cfg_.TILE_Y, -1), selected_({ 0,0 }), isHold_(false), ScrollOffset_({0,0}) //初期値を-1で16*12の配列を初期化する
 {    
 	
-
+	//ここで画像の大きさを変更して、スクロールできる大きさにする
+	bgHandle.resize(cfg_.TILE_PIX_SIZE * cfg_.TILE_X * cfg_.TILE_Y, -1);
 	    LoadDivGraph("./bg.png", cfg_.TILE_X * cfg_.TILE_Y,
 			          cfg_.TILE_X, cfg_.TILE_Y,
 			          cfg_.TILE_PIX_SIZE, cfg_.TILE_PIX_SIZE, bgHandle.data());
@@ -283,14 +284,8 @@ Point MapChip::GetViewOrigin() const
 
 bool MapChip::IsInMapChipArea(const Point& mouse) const
 {
-	/*return (mouse.x > GetViewOrigin().x && mouse.x < Screen::WIDTH 
-		&&  mouse.y > GetViewOrigin().y && mouse.y < Screen::HEIGHT);*/
-
-	
-	   return (mouse.x >= GetViewOrigin().x &&
-		mouse.x < Screen::WIDTH &&
-		mouse.y >= 0 &&
-		mouse.y < cfg_.MAPCHIP_WIN_HEIGHT);
+	return (mouse.x > GetViewOrigin().x && mouse.x < Screen::WIDTH
+		&& mouse.y > GetViewOrigin().y && mouse.y < Screen::HEIGHT);
 	
 }
 
@@ -319,16 +314,22 @@ void MapChip::Update()
 	if (isInMapChipArea_) {
 		if (Input::IsKeyDown(KEY_INPUT_LEFT))
 		{
-			
-			ScrollOffset_.x = std::min(std::max(cfg_.MAPCHIP_VIEW_X, cfg_.TILE_X - cfg_.MAPCHIP_VIEW_X), ScrollOffset_.x + 1);
-			//ScrollOffset_.x = std::min(std::max(0, cfg_.TILE_X - cfg_.MAPCHIP_VIEW_X), ScrollOffset_.x + 1);
-			//ScrollOffset_.x = ScrollOffset_.x + 1;
+			ScrollOffset_.x = std::min(std::max(cfg_.MAPCHIP_VIEW_X, cfg_.TILE_X - cfg_.MAPCHIP_VIEW_X + 1), ScrollOffset_.x + 1);
 		}
 		if (Input::IsKeyDown(KEY_INPUT_RIGHT))
 		{
-			ScrollOffset_.x  = std::max(0, ScrollOffset_.x - 1);
-			//ScrollOffset_.x = ScrollOffset_.x - 1;
+			ScrollOffset_.x = std::max(0, ScrollOffset_.x - 1);
 		}
+
+		if (Input::IsKeyDown(KEY_INPUT_UP))
+		{
+			ScrollOffset_.y = std::max(0, ScrollOffset_.y + 1);
+		}
+		if (Input::IsKeyDown(KEY_INPUT_DOWN))
+		{
+			ScrollOffset_.y = std::min(std::max(0, cfg_.TILE_Y + cfg_.MAPCHIP_VIEW_Y), ScrollOffset_.y - 1);
+		}
+
 		selected_ = ScreenToChip(mousePos);
 		int index = selected_.y * cfg_.TILE_X + selected_.x;
 		if (Input::IsButtonDown(MOUSE_INPUT_LEFT))
@@ -352,14 +353,16 @@ void MapChip::Draw()
 	{
 		for (int j = 0; j < cfg_.TILE_Y; j++)
 		{
-			int index = i +  ScrollOffset_.x + j * cfg_.TILE_X;
+			int gx = i + ScrollOffset_.x;
+			int gy = j + ScrollOffset_.y;
+			int index = gy * cfg_.TILE_X + gx;
 			if (index < 0)
 			{
 				continue;
 			}
 			DrawGraph(GetViewOrigin().x + i * cfg_.TILE_PIX_SIZE,
-				      GetViewOrigin().y + j * cfg_.TILE_PIX_SIZE,bgHandle[index], TRUE);
-
+				GetViewOrigin().y + j * cfg_.TILE_PIX_SIZE,
+				bgHandle[index], TRUE);
 		}
 	}
 	//マップチップの選択範囲をハイライト表示
@@ -367,16 +370,17 @@ void MapChip::Draw()
 	{
 		int px = GetViewOrigin().x + selected_.x * cfg_.TILE_PIX_SIZE;
 		int py = selected_.y * cfg_.TILE_PIX_SIZE;
+		int size = cfg_.TILE_PIX_SIZE;
 
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 		
-		DrawBox(px, py,
-		     px +  cfg_.TILE_PIX_SIZE - 1, py + cfg_.TILE_PIX_SIZE + 1,
+		DrawBox(px + 4, py - 1,
+		     px +  size - 1, py + size + 1,
 			GetColor(255, 255, 0), TRUE);
 		
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		
-		DrawBox(px,py,px +cfg_.TILE_PIX_SIZE - 1 ,py + cfg_.TILE_PIX_SIZE + 1,
+		DrawBox(px,py,px + size - 1 ,py + cfg_.TILE_PIX_SIZE + 1,
 			GetColor(255, 0, 0), FALSE, 2);
 	}
 	//ホールド中のマップチップの描画
