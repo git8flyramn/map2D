@@ -3,13 +3,15 @@
 #include <vector>
 #include "globals.h"
 #include "MapEditConfig.h"
+
+
 namespace
 {
-    const int MAP_WIDTH = { 20 };
-    const int MAP_HEIGHT = { 20 };
-    const int MAP_IMAGE_SIZE = { 32 };
-    const int LEFT_MARGIN = {100};
-    const int TOP_MARGIN = {40};
+    int UP_Scale_Resize = 0;
+    int Down_Scale_Resize = 0;
+    int Line_resize_left = 0;
+    int Line_resize_right = 0;
+   
 }
 class MapEdit :
     public GameObject
@@ -31,6 +33,7 @@ private:
     Rect mapEditRect_; //マップ領域の矩形
     Rect drawAreaRect_;//描画領域の矩形
     bool isInMapEditArea_;
+    bool Scaleresize_;
 
 };
 
