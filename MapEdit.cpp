@@ -52,11 +52,7 @@ void MapEdit::Update()
 	isInMapEditArea_ = mousePos.x >= mapEditRect_.x && mousePos.x <= mapEditRect_.x + mapEditRect_.w &&
 		               mousePos.y >= mapEditRect_.y && mousePos.y <= mapEditRect_.y + mapEditRect_.h;
 
-	//左上　mapEditRect_.x, mapEditRect_.y
-	//右上　mapEditRect_.x + mapEditRect_.w, mapEditRect_.y
-	//右下  mapEditRect_.x + mapEditRect_.w, mapEditRect_.y + mapEditRect_.h
-	//左下  mapEditRect_.x, mapEditRect_.y + mapEditRect_.h
-		// グリッド座標に変換
+	
 	if (!isInMapEditArea_) {
 		return; //マップエディタ領域外なら何もしない
 	}
@@ -89,8 +85,8 @@ void MapEdit::Update()
 
 		if (CheckHitKey(KEY_INPUT_LSHIFT)) //Rキーを押しているなら
 		{
-			SetMap({ gridX, gridY }, -1); //マップに値をセット（-1は何もない状態）
-			return; //マップチップを削除したらここで終了
+			SetMap({ gridX, gridY }, -1); 
+			return; 
 		}
 		else if (mapChip && mapChip->IsHold()) //マップチップを持っているなら
 		{

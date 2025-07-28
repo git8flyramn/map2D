@@ -40,15 +40,6 @@ MapChip::MapChip()
 	    LoadDivGraph("./bg.png", cfg_.TILE_X * cfg_.TILE_Y,
 			          cfg_.TILE_X, cfg_.TILE_Y,
 			          cfg_.TILE_PIX_SIZE, cfg_.TILE_PIX_SIZE, bgHandle.data());
-	//for (int i = 0; i < MAP_CHIP_NUM_X; i++) {
-	//	for (int j = 0; j < MAP_CHIP_NUM_Y; j++) {
-	//		Rect tmp{
-	//			i * IMAGE_SIZE, j * IMAGE_SIZE,
-	//			IMAGE_SIZE, IMAGE_SIZE
-	//		};
-	//		//bgRects_.push_back(tmp);
-	//	}
-	//}
 
 	//LUT(Look Up Table) 作成
 	for (int i = 0; i < bgHandle.size(); i++)
@@ -181,8 +172,6 @@ void MapChip::Draw()
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		
 		//今、自分が選択しているマップチップが何かを表すためのフレーム
-	/*	DrawBox(px,py,px + size - 1 ,py + size + 1,
-			GetColor(255, 0, 0), FALSE, 2);*/
 		DrawBox(px, py, px + size, py + size, GetColor(255, 0, 0), FALSE);
 	}
 	//ホールド中のマップチップの描画
